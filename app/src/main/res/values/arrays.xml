@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="items" />
+    <string-array name="priority" >
+        <item name="High">High</item>
+        <item name="Medium">Medium</item>
+        <item name="Low">Low</item>
+    </string-array>
+    <string-array name="typeofassign" >
+        <item name="Self">Self</item>
+        <item name="Group">Group</item>
+    </string-array>
+    <string-array name="shareItems" >
+        <item name="email">Email</item>
+        <item name="sms">SMS</item>
+        <item name="call">Call</item>
+    </string-array>
+    <string-array name="date_options" >
+        <item name="week">Week</item>
+        <item name="month">Month</item>
+        <item name="date">Date</item>
+    </string-array>
+    <string-array name="week_options" >
+        <item name="1">1</item>
+        <item name="2">2</item>
+        <item name="3">3</item>
+        <item name="4">4</item>
+        <item name="5">5</item>
+        <item name="6">6</item>
+        <item name="1">7</item>
+        <item name="2">8</item>
+        <item name="3">9</item>
+        <item name="4">10</item>
+        <item name="5">11</item>
+        <item name="6">12</item>
+    </string-array>
+    <string-array name="month_options" >
+        <item name="1">1</item>
+        <item name="2">2</item>
+        <item name="3">3</item>
+        <item name="4">4</item>
+        <item name="5">5</item>
+        <item name="6">6</item>
+        <item name="1">7</item>
+        <item name="2">8</item>
+        <item name="3">9</item>
+        <item name="4">10</item>
+        <item name="5">11</item>
+        <item name="6">12</item>
+    </string-array>
+</resources>

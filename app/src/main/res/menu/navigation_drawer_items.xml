@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.hmkcode.mongoz.MainActivity" >
+
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/create_task"
+            android:icon="@drawable/addtask"
+            android:title="Create Task"/>
+        <item
+            android:id="@+id/view_category"
+            android:icon="@drawable/category"
+            android:title="View Category"/>
+
+        <item
+            android:id="@+id/view_diary"
+            android:icon="@drawable/diary"
+            android:title="View Diary"/>
+
+    </group>
+
+</menu>

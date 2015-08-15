@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorAccent">@color/app_color</item>
+        <item name="colorPrimary">@color/app_color</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activatedbackground</item>
+    </style>
+
+</resources>

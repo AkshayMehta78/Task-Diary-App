@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="app_background_color">#E7E7E7</color>
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="primary_text_color">#000000</color>
+
+    <!-- Navigation Drawer -->
+    <color name="navdrawer_background">#ffffffff</color>
+    <color name="theme_primary">#3f51b5</color>
+    <color name="navdrawer_text_color_selected">@color/theme_primary</color>
+    <color name="body_text_1">#de000000</color>
+    <color name="navdrawer_text_color">@color/body_text_1</color>
+    <color name="navdrawer_icon_tint_selected">@color/theme_primary</color>
+    <color name="navdrawer_icon_tint">#808080</color>
+
+    <!-- Profile tab  -->
+    <color name="profile_tab_text_color">#deffffff</color>
+    <color name="session_photo_scrim">#3000</color>
+    <color name="dark_grey">#5e5e5e</color>
+    <color name="blueTextColor">#4bafe4</color>
+
+    <color name="progressBarColor">#6DB6E5</color>
+
+
+    <color name="light_grey">#5e5e5e</color>
+
+
+    <color name="date_selected">#5FAAF5</color>
+    <color name="date_unselected">#BBBBBB</color>
+
+
+    <color name="elv_btn_pressed">#ff33b5e5</color>
+    <color name="elv_btn_focused">#ff0099cc</color>
+    <color name="elv_btn_normal">#00000000</color>
+
+    <color name="elv_popup_bg_color">#EE666666</color>
+    <color name="elv_separator_color">#BBBBBB</color>
+    <color name="elv_popup_text_color">#FFFFFF</color>
+    <color name="green_yellow">#ADFF2F</color>
+    <color name="white">#ffffff</color>
+    <color name="bottom_color">#1c5767</color>
+    <color name="customgrey">#1d1d1e</color>
+    <color name="dealbg">#115572</color>
+    <color name="grey">#e9e9e9</color>
+
+
+    <!-- Splash screen color -->
+    <color name="pink_color">#e43a45</color>
+
+    <!--Glow Pad Color-->
+    <color name="glowcolor">#f8e17f</color>
+    <color name="actionbar_color">#58b7ea</color>
+    <color name="actionbar_color_night">#141414</color>
+    <color name="night_bottom_color">#120f16</color>
+    <color name="purple">#251d36</color>
+    <color name="fab_color">#FF5722</color>
+    <color name="fab_color_ripple">#90FF5722</color>
+    <color name="black">#000000</color>
+    <color name="orange">#FFA500</color>
+    <color name="green">#66CD00</color>
+
+    <color name="app_color">#66c600</color>
+</resources>
