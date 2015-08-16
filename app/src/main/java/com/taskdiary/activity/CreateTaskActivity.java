@@ -123,7 +123,7 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
         contactIDs= new ArrayList<String>();
         remindersList =new ArrayList<Reminder>();
         setReminderList();
-        Utils.setListViewHeightBasedOnChildren(reminderslistView);
+     //   Utils.setListViewHeightBasedOnChildren(reminderslistView);
     }
 
 

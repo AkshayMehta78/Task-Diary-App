@@ -48,4 +48,5 @@
     <string name="select_week">Select options to add</string>
     <string name="task_updated">Task Data Updated</string>
     <string name="share">Share</string>
+    <string name="email_subject">Task Details</string>
 </resources>

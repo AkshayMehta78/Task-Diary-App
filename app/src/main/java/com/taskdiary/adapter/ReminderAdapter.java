@@ -18,7 +18,9 @@ import com.taskdiary.model.Reminder;
 import com.taskdiary.model.Task;
 import com.taskdiary.utils.Constant;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by akshaymehta on 07/08/15.
@@ -63,8 +65,15 @@ public class ReminderAdapter extends ArrayAdapter<Reminder> {
             holder = (ViewHolder) convertView.getTag();
         }
 
+        try {
+            Date reminderDate =Constant.SDFDATEFORMAT.parse(item.getDate());
+            String displayDate = Constant.SDFDATEFORMAT_DISPLAY.format(reminderDate);
+            holder.tvDate.setText(displayDate);
 
-        holder.tvDate.setText(item.getDate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         holder.tvTime.setText(item.getTime());
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override

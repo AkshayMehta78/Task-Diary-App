@@ -15,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.taskdiary.activity.R;
 import com.taskdiary.activity.ViewTaskDetails;
 import com.taskdiary.adapter.PendingTaskAdapter;
@@ -88,7 +90,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
                             if (selected.valueAt(i)) {
                                 Task selecteditem = adapter.getItem(selected.keyAt(i));
                                 adapter.remove(selecteditem);
-                                db.updateTask(selecteditem.getId(), Constant.COMPLETE);
+                                db.updateTask(selecteditem.getId(), Constant.COMPLETE, Constant.PENDING);
                             }
                         }
                         // Close CAB
@@ -117,7 +119,8 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
                             }
                         }
                         if(flag) {
-                            OpenSharingIntent(message);
+                            openShareDialog(contactId + "", message);
+                        //    OpenSharingIntent(message);
                             mode.finish();
                         }
 
@@ -252,7 +255,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        //  setUpTaskList();
+        setUpTaskList();
     }
 
     @Override
@@ -267,5 +270,37 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
         {
             e.printStackTrace();
         }
+    }
+
+
+    private void openShareDialog(final String contactid, String message) {
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.share_with)
+                .items(R.array.shareItems)
+                .theme(Theme.LIGHT)
+                .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                    @Override
+                    public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                        if (which == 0) {
+                            String emailId = Utils.retrieveContactEmail(contactid, getActivity().getApplicationContext());
+                            if (emailId!=null)
+                                Utils.showEmailDialog(getActivity(), emailId,message);
+                        } else if (which == 1) {
+                            String contactNo = Utils.getContactNumber(contactid, getActivity().getApplicationContext());
+                            if (!contactNo.isEmpty())
+                                Utils.sendSMSDialog(getActivity(), contactNo, message);
+                            else
+                                Utils.showToast(getActivity(), getString(R.string.no_number));
+                        } else {
+                            String contactNo = Utils.getContactNumber(contactid, getActivity().getApplicationContext());
+                            if (!contactNo.isEmpty())
+                                Utils.showCallDialog(getActivity(), contactNo);
+                            else
+                                Utils.showToast(getActivity(), getString(R.string.no_number));
+                        }
+                        return true;
+                    }
+                })
+                .show();
     }
 }

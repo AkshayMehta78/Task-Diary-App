@@ -60,6 +60,7 @@ import java.util.Date;
 public class Utils {
 
 
+
     public static void startHomeActivity(Activity activity) {
         Intent intent = new Intent(activity, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -195,7 +196,8 @@ public class Utils {
     public static void sendSMSDialog(Activity activity, String contactNo, Task taskDetails) {
         Uri uri = Uri.parse("smsto:" + contactNo);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
-        it.putExtra(taskDetails.getTitle(), taskDetails.getDesc());
+//        it.putExtra(taskDetails.getTitle(), taskDetails.getDesc());
+        it.putExtra("sms_body","Title : "+taskDetails.getTitle()+"\nDescription: "+taskDetails.getDesc());
         activity.startActivity(it);
     }
 
@@ -229,7 +231,7 @@ public class Utils {
     }
 
     public static String getCurrentDate() {
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormat = new SimpleDateFormat(Constant.DATEFORMAT);
         Calendar cal = Calendar.getInstance();
         String currentDate = dateFormat.format(cal.getTime());
         return currentDate;
@@ -303,5 +305,52 @@ public class Utils {
             }
         }
         return list;
+    }
+
+    public static String retrieveContactEmail(String contactid, Context context) {
+        String email="";
+        Cursor emailCur = context.getContentResolver().query(
+                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                null,
+                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                new String[]{contactid}, null);
+        while (emailCur.moveToNext()) {
+            // This would allow you get several email addresses
+            // if the email addresses were stored in an array
+            email = emailCur.getString(
+                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+            String emailType = emailCur.getString(
+                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+        }
+        emailCur.close();
+        return email;
+    }
+
+    public static void showEmailDialog(Activity activity, String emailId, Task taskDetails) {
+        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        emailIntent.setType("vnd.android.cursor.item/email");
+        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{emailId});
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, activity.getString(R.string.email_subject));
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Title : "+taskDetails.getTitle()+"\nDescription: "+taskDetails.getDesc());
+        activity.startActivity(Intent.createChooser(emailIntent, "Send mail using..."));
+    }
+
+    public static void showEmailDialog(Activity activity, String emailId, String message) {
+        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        emailIntent.setType("vnd.android.cursor.item/email");
+        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{emailId});
+        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, activity.getString(R.string.email_subject));
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, message);
+        activity.startActivity(Intent.createChooser(emailIntent, "Send mail using..."));
+    }
+
+    public static void sendSMSDialog(Activity activity, String contactNo, String message) {
+        Uri uri = Uri.parse("smsto:" + contactNo);
+        Intent it = new Intent(Intent.ACTION_SENDTO, uri);
+//        it.putExtra(taskDetails.getTitle(), taskDetails.getDesc());
+        it.putExtra("sms_body","Title : "+taskDetails.getTitle()+"\nDescription: "+taskDetails.getDesc());
+        activity.startActivity(it);
     }
 }

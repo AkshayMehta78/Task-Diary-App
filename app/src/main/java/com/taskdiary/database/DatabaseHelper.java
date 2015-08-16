@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TABLE_TASK + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ," + KEY_TITLE + " TEXT," + KEY_DESC + " TEXT," + KEY_CATEGORY + " TEXT," + KEY_PRIORITY + " TEXT," + KEY_TYPE + " TEXT,"+ KEY_CONTACTS_ID+ " TEXT," + KEY_DATE + " TEXT," + KEY_COMPLETED + " TEXT," + KEY_DELETED + " TEXT)";
 
     public static final String CREATE_TABLE_REMINDER= "CREATE TABLE "
-            + TABLE_REMINDER + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ," + KEY_TASKID + " INTEGER," + KEY_DATE + " TEXT,"+KEY_TIME+" TEXT )";
+            + TABLE_REMINDER + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ," + KEY_TASKID + " INTEGER," + KEY_DATE + " TEXT,"+KEY_TIME+" TEXT, "+ KEY_COMPLETED + " TEXT)";
 
 
     public DatabaseHelper(Context context) {
@@ -129,6 +129,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(KEY_TASKID, taskId);
             values.put(KEY_DATE,list.get(i).getDate());
             values.put(KEY_TIME, list.get(i).getTime());
+            values.put(KEY_COMPLETED,0);
             db.insert(TABLE_REMINDER, null, values);
         }
     }
@@ -137,18 +138,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<Task> result = new ArrayList<Task>();
         String selectQuery ="";
         if(status.equalsIgnoreCase(Constant.COMPLETE)) {
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE " + KEY_COMPLETED+"='1' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            String Ids = getAllCompletedDayIds();
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE " + KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
         }else if(status.equalsIgnoreCase(Constant.INCOMPLETE))
         {
             String Ids = getAllCurrentDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND " + KEY_COMPLETED+"='0' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
         }else if(status.equalsIgnoreCase(Constant.PENDING))
         {
             String Ids = getAllPreviousDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND " + KEY_COMPLETED+"='0' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
         }
         else
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE " + KEY_COMPLETED+"='0' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
 
         Log.e("query",selectQuery);
         Cursor c = db.rawQuery(selectQuery, null);
@@ -172,10 +174,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    private String getAllCompletedDayIds() {
+        String Ids="(";
+        String currentDate = Utils.getCurrentDate();
+        String selectQuery = "SELECT  * FROM " + TABLE_REMINDER + " WHERE "+KEY_COMPLETED+"='1'";
+        Cursor c = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                if(c.isLast())
+                {
+                    Ids = Ids+c.getInt(c.getColumnIndex(KEY_TASKID));
+                }
+                else
+                    Ids = Ids+c.getInt(c.getColumnIndex(KEY_TASKID))+",";
+            } while (c.moveToNext());
+        }
+        return Ids+")";
+    }
+
     private String getAllPreviousDayIds() {
         String Ids="(";
         String currentDate = Utils.getCurrentDate();
-        String selectQuery = "SELECT  * FROM " + TABLE_REMINDER + " WHERE " + KEY_DATE + "<'"+currentDate+"'";
+        String selectQuery = "SELECT  * FROM " + TABLE_REMINDER + " WHERE " + KEY_DATE + "<'"+currentDate+"' AND "+ KEY_COMPLETED+"='0'";
         Cursor c = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
@@ -195,7 +216,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private String getAllCurrentDayIds() {
         String Ids="(";
         String currentDate = Utils.getCurrentDate();
-        String selectQuery = "SELECT  * FROM " + TABLE_REMINDER + " WHERE " + KEY_DATE + "='"+currentDate+"'";
+        String selectQuery = "SELECT  * FROM " + TABLE_REMINDER + " WHERE " + KEY_DATE + "='"+currentDate+"' AND "+KEY_COMPLETED+"='0'";
         Cursor c = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
@@ -211,10 +232,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return Ids+")";
     }
 
-    public void updateTask(String id,String value) {
+    public void updateTask(String id, String value, String status) {
         ContentValues values = new ContentValues();
-        values.put(KEY_COMPLETED,value);
-        int rowsUpdated = db.update(TABLE_TASK, values, KEY_ID + "=" + id, null);
+        values.put(KEY_COMPLETED, value);
+        if(status.equalsIgnoreCase(Constant.INCOMPLETE))
+            db.update(TABLE_REMINDER, values, KEY_DATE + "='" + Utils.getCurrentDate()+"' AND "+ KEY_TASKID+"="+id, null);
+        else if(status.equalsIgnoreCase(Constant.PENDING))
+            db.update(TABLE_REMINDER, values, KEY_DATE + "<'" + Utils.getCurrentDate()+"' AND "+ KEY_TASKID+"="+id, null);
+        else
+            db.update(TABLE_REMINDER, values, KEY_DATE + "<='" + Utils.getCurrentDate()+"' AND "+ KEY_TASKID+"="+id, null);
     }
 
     public void deleteTask(String id) {
@@ -322,11 +348,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<Task> result = new ArrayList<Task>();
         String selectQuery = "SELECT  * FROM " + TABLE_TASK + " ORDER BY " + KEY_ID + " DESC";
         if(status.equalsIgnoreCase(Constant.COMPLETE)) {
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+ KEY_COMPLETED+"='1' AND "+KEY_DELETED+"='0' AND "+KEY_CATEGORY+"='"+category+"' ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
+            String Ids = getAllCompletedDayIds();
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"='0' AND "+KEY_CATEGORY+"='"+category+"' ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
         }else if(status.equalsIgnoreCase(Constant.INCOMPLETE))
         {
             String Ids = getAllCurrentDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+ KEY_COMPLETED+"='0' AND "+KEY_DELETED+"='0' AND "+KEY_CATEGORY+"='"+category+"' ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"='0' AND "+KEY_CATEGORY+"='"+category+"' ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
+        }else
+        {
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_DELETED+"='0' AND "+KEY_CATEGORY+"='"+category+"' ORDER BY " + KEY_ID + " DESC";
         }
 
         Log.e("query",selectQuery);
@@ -358,7 +388,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             String selectQuery ="";
             String Ids = getAllPreviousDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_CONTACTS_ID+" like '%"+contactIds.get(i)+"%' AND " + KEY_COMPLETED+"='0' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_CONTACTS_ID+" like '%"+contactIds.get(i)+"%' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
 
             Log.e("query",selectQuery);
             Cursor c = db.rawQuery(selectQuery, null);

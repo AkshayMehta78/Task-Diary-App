@@ -200,7 +200,9 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         if (which == 0) {
-
+                            String emailId = Utils.retrieveContactEmail(contactid, getApplicationContext());
+                            if (emailId!=null)
+                                Utils.showEmailDialog(ViewTaskDetails.this, emailId,taskDetails);
                         } else if (which == 1) {
                             String contactNo = Utils.getContactNumber(contactid, getApplicationContext());
                             if (!contactNo.isEmpty())

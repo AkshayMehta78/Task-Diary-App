@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -92,7 +91,7 @@ public class CompletedTaskFragment extends Fragment implements View.OnClickListe
                                 Task selecteditem = adapter.getItem(selectedIds.keyAt(i));
                                 // Remove selected items following the ids
                                 adapter.remove(selecteditem);
-                                db.updateTask(selecteditem.getId(), Constant.INCOMPLETE);
+                                db.updateTask(selecteditem.getId(), Constant.INCOMPLETE, Constant.COMPLETE);
                             }
                         }
                         // Close CAB

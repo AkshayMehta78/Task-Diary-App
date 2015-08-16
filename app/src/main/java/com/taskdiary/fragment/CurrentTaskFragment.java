@@ -76,7 +76,7 @@ public class CurrentTaskFragment extends Fragment implements View.OnClickListene
                                 Task selecteditem = adapter.getItem(selected.keyAt(i));
                                 // Remove selected items following the ids
                                 adapter.remove(selecteditem);
-                                db.updateTask(selecteditem.getId(), Constant.COMPLETE);
+                                db.updateTask(selecteditem.getId(), Constant.COMPLETE,Constant.INCOMPLETE);
                             }
                         }
                         // Close CAB

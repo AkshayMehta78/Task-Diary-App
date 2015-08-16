@@ -6,11 +6,18 @@ import android.preference.PreferenceManager;
 
 import com.taskdiary.database.DatabaseHelper;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 /**
  * Created by akshaymehta on 06/08/15.
  */
 public class Constant {
-    public static final String DATEFORMAT = "dd/MM/yyyy";
+    public static final String DATEFORMAT_DISPLAY = "dd/MM/yyyy";
+    public static final String DATEFORMAT = "yyyy/MM/dd";
+
+    public static final DateFormat SDFDATEFORMAT_DISPLAY = new SimpleDateFormat(DATEFORMAT_DISPLAY);
+    public static final DateFormat SDFDATEFORMAT = new SimpleDateFormat(DATEFORMAT);
 
     public static final String INCOMPLETE = "0";
     public static final String COMPLETE = "1";
