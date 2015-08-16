@@ -52,6 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -304,6 +305,7 @@ public class Utils {
                     list.add(contactIDsArray.get(j).trim());
             }
         }
+        Collections.sort(list);
         return list;
     }
 
@@ -350,7 +352,7 @@ public class Utils {
         Uri uri = Uri.parse("smsto:" + contactNo);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
 //        it.putExtra(taskDetails.getTitle(), taskDetails.getDesc());
-        it.putExtra("sms_body","Title : "+taskDetails.getTitle()+"\nDescription: "+taskDetails.getDesc());
+        it.putExtra("sms_body",message);
         activity.startActivity(it);
     }
 }

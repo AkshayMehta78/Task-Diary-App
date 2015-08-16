@@ -27,6 +27,8 @@ import com.taskdiary.utils.Constant;
 import com.taskdiary.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by akshaymehta on 05/08/15.
@@ -198,7 +200,15 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
             adapter.clear();
 
         result = new ArrayList<Task>();
-        result = db.getAllTaskPersonWise(Constant.PENDING);
+        result = db.getAllTaskPersonWise(Constant.PENDING,getActivity());
+
+        Collections.sort(result, new Comparator<Task>() {
+            @Override
+            public int compare(Task t1, Task t2) {
+                return t1.getContactName().compareToIgnoreCase(t2.getContactName());
+            }
+        });
+
         if(result.size()>0)
         {
             emptyTextView.setVisibility(View.GONE);
@@ -273,7 +283,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
     }
 
 
-    private void openShareDialog(final String contactid, String message) {
+    private void openShareDialog(final String contactid, final String message) {
         new MaterialDialog.Builder(getActivity())
                 .title(R.string.share_with)
                 .items(R.array.shareItems)

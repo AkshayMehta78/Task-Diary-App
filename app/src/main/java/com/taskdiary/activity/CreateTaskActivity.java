@@ -153,17 +153,25 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
         if (v == selectTypeTextView) {
             openTaskType();
         }
-        if (v == contactImage1) {
-            id = 1;
-            startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
+        if (v == contactImage1){
+                id = 1;
+                startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
         }
         if (v == contactImage2) {
-            id = 2;
-            startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
+            if(contactIDs.size()==1) {
+                id = 2;
+                startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
+            }else
+                Utils.showToast(getApplicationContext(),"Please Select Previous Contact First");
+
         }
         if (v == contactImage3) {
-            id = 3;
-            startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
+            if(contactIDs.size()==2) {
+                id = 3;
+                startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
+            }
+            else
+                Utils.showToast(getApplicationContext(),"Please Select Previous Contact First");
         }
         if(v == addReminderTextView)
         {
@@ -333,6 +341,7 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
         }
         if (selectedTypeTextView.getText().toString().isEmpty()) {
             Utils.showToast(this, getString(R.string.empty_type));
+            flag = false;
             return flag;
         }
         if(selectedTypeTextView.getText().toString().equalsIgnoreCase("Group"))
@@ -343,6 +352,12 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
                 flag = false;
                 return flag;
             }
+        }
+        if(remindersList.size()==0)
+        {
+            Utils.showToast(this, getString(R.string.empty_reminder));
+            flag = false;
+            return flag;
         }
         return flag;
     }

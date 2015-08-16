@@ -17,6 +17,7 @@ public class Task {
     String deleted;
 
     ArrayList<Reminder> list;
+    private String contactName;
 
     public ArrayList<Reminder> getList() {
         return list;
@@ -108,6 +109,14 @@ public class Task {
 
     public void setDeleted(String deleted) {
         this.deleted = deleted;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactName() {
+        return contactName;
     }
 
 }

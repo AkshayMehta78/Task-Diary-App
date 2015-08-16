@@ -78,6 +78,7 @@ public class PendingTaskAdapter extends ArrayAdapter<Task> {
             holder.viewPriority.setBackgroundColor(activity.getResources().getColor(R.color.orange));
         else
             holder.viewPriority.setBackgroundColor(activity.getResources().getColor(R.color.app_color));
+
         if((item.getContactIDs()!=null && item.getContactIDs()!=previous_item.getContactIDs())|| (item.getContactIDs()!=null && position==0))
             holder.contactNameTextView.setText(Utils.retrieveContactName(item.getContactIDs(),activity));
         else

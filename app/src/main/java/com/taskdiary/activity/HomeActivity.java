@@ -38,7 +38,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private PagerAdapter pagerAdapter;
     private ArrayList<Fragment> mFragments;
     private ViewPager mViewPager;
-    private String[] mTabTitles = {"Current", "Pending", "Completed"};
+    private String[] mTabTitles = {"Todays\'s", "Pending", "Completed"};
     private Toolbar mToolbar;
     private FloatingActionButton addTaskFloatingButton;
     private DrawerLayout drawerLayout;

@@ -1,10 +1,12 @@
 package com.taskdiary.database;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.taskdiary.model.Reminder;
@@ -381,7 +383,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public ArrayList<Task> getAllTaskPersonWise(String status) {
+    public ArrayList<Task> getAllTaskPersonWise(String status, Activity activity) {
         ArrayList<Task> result = new ArrayList<Task>();
         ArrayList<String> contactIds = getAllContacts();
         for(int i=0;i<contactIds.size();i++)
@@ -406,6 +408,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     item.setCompleted(c.getString(c.getColumnIndex(KEY_COMPLETED)));
                     item.setDeleted(c.getString(c.getColumnIndex(KEY_DELETED)));
                     item.setContactIDs(contactIds.get(i));
+                    item.setContactName(Utils.retrieveContactName(contactIds.get(i),activity));
                     result.add(item);
                 } while (c.moveToNext());
             }
