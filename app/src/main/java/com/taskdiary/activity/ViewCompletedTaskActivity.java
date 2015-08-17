@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 /**
  * Created by akshaymehta on 15/08/15.
  */
-public class ViewAllTaskActivity extends AppCompatActivity implements View.OnClickListener{
+public class ViewCompletedTaskActivity extends AppCompatActivity{
     private View mView;
     private ListView taskListView;
     private ArrayList<Task> result;
@@ -52,12 +53,12 @@ public class ViewAllTaskActivity extends AppCompatActivity implements View.OnCli
         setWidgetEvents();
         initialization();
         setupToolbar();
-        setUpTaskList();
+    //    setUpTaskList();
 
         taskListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(ViewAllTaskActivity.this, ViewTaskDetails.class);
+                Intent i = new Intent(ViewCompletedTaskActivity.this, ViewTaskDetails.class);
                 i.putExtra(DatabaseHelper.KEY_ID, result.get(position).getId());
                 startActivity(i);
             }
@@ -80,37 +81,23 @@ public class ViewAllTaskActivity extends AppCompatActivity implements View.OnCli
             }
 
             @Override
-            public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.delete:
-
-                        new MaterialDialog.Builder(ViewAllTaskActivity.this)
-                                .title("Delete Task")
-                                .theme(Theme.LIGHT)
-                                .positiveText(R.string.done)
-                                .negativeText(R.string.cancel)
-                                .content("Deleting task will delete all its subsequent reminders. Do you want to continue?")
-                                .callback(new MaterialDialog.ButtonCallback() {
-                                    @Override
-                                    public void onPositive(MaterialDialog dialog) {
-                                        // Calls getSelectedIds method from ListViewAdapter Class
-                                        SparseBooleanArray selected = adapter
-                                                .getSelectedIds();
-                                        // Captures all selected ids with a loop
-                                        for (int i = (selected.size() - 1); i >= 0; i--) {
-                                            if (selected.valueAt(i)) {
-                                                Task selecteditem = adapter.getItem(selected.keyAt(i));
-                                                // Remove selected items following the ids
-                                                adapter.remove(selecteditem);
-                                                db.deleteTask(selecteditem.getId());
-                                            }
-                                        }
-                                        // Close CAB
-                                        mode.finish();
-                                    }
-                                })
-                                .show();
-
+                        // Calls getSelectedIds method from ListViewAdapter Class
+                        SparseBooleanArray selected = adapter
+                                .getSelectedIds();
+                        // Captures all selected ids with a loop
+                        for (int i = (selected.size() - 1); i >= 0; i--) {
+                            if (selected.valueAt(i)) {
+                                Task selecteditem = adapter.getItem(selected.keyAt(i));
+                                // Remove selected items following the ids
+                                adapter.remove(selecteditem);
+                                db.deleteTask(selecteditem.getId());
+                            }
+                        }
+                        // Close CAB
+                        mode.finish();
                         return true;
                     default:
                         return false;
@@ -148,13 +135,12 @@ public class ViewAllTaskActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void setWidgetEvents() {
-        tvSort.setOnClickListener(this);
     }
 
     private void initialization() {
         db = new DatabaseHelper(this);
         taskListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        tvSort.setVisibility(View.VISIBLE);
+
     }
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
@@ -165,6 +151,7 @@ public class ViewAllTaskActivity extends AppCompatActivity implements View.OnCli
     private void setUpTaskList() {
         result = new ArrayList<Task>();
         result = db.getAllTask("");
+        result = filterList();
         if(result.size()>0)
         {
             emptyTextView.setVisibility(View.GONE);
@@ -179,6 +166,20 @@ public class ViewAllTaskActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private ArrayList<Task> filterList() {
+        ArrayList<Task> dummyList = result;
+        if(dummyList.size()>0)
+        {
+            for(int i= 0;i<dummyList.size();i++)
+            {
+                Task item = dummyList.get(i);
+                Log.e("task",item.getTaskStatus()+"");
+                if(!item.getTaskStatus())
+                    result.remove(i);
+            }
+        }
+        return result;
+    }
 
 
     @Override
@@ -203,45 +204,6 @@ public class ViewAllTaskActivity extends AppCompatActivity implements View.OnCli
     }
 
 
-    @Override
-    public void onClick(View v) {
-        if(v==tvSort)
-        {
-            openCategoryDialog();
-        }
-    }
 
-
-    private void openCategoryDialog() {
-        String list[] = db.getAllCategories();
-        new MaterialDialog.Builder(this)
-                .title(R.string.view_all)
-                .items(list)
-                .theme(Theme.LIGHT)
-                .itemsCallback(new MaterialDialog.ListCallback() {
-                    @Override
-                    public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        setUpTaskListByCategory(text.toString());
-                    }
-                })
-                .show();
-    }
-
-    private void setUpTaskListByCategory(String category) {
-        result = new ArrayList<Task>();
-        result = db.getAllTaskByCategory("",category);
-        if(result.size()>0)
-        {
-            emptyTextView.setVisibility(View.GONE);
-            taskListView.setVisibility(View.VISIBLE);
-            adapter = new TaskAdapter(this,result);
-            taskListView.setAdapter(adapter);
-        }
-        else
-        {
-            emptyTextView.setVisibility(View.VISIBLE);
-            taskListView.setVisibility(View.GONE);
-        }
-    }
 
 }

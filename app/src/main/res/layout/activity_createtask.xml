@@ -25,6 +25,7 @@
         android:textColor="@color/black"
         android:padding="@dimen/padding_large"
         android:layout_marginTop="@dimen/margin_large"
+        android:inputType="textCapWords|textCapSentences"
         />
 
 
@@ -38,6 +39,7 @@
         android:textColorHint="@color/light_grey"
         android:textColor="@color/black"
         android:padding="@dimen/padding_large"
+        android:inputType="textCapWords|textCapSentences"
         android:layout_marginTop="@dimen/margin_large"/>
 
 

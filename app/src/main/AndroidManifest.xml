@@ -36,6 +36,11 @@
         <activity
             android:name=".ViewAllTaskActivity"
             android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".ViewCompletedTaskActivity"
+            android:screenOrientation="portrait"></activity>
+
         <receiver android:name="com.taskdiary.receiver.AlarmReceiver"></receiver>
 
     </application>

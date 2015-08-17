@@ -16,6 +16,15 @@ public class Task {
     String completed;
     String deleted;
 
+    public boolean getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(boolean taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
+    boolean taskStatus;
     ArrayList<Reminder> list;
     private String contactName;
 
@@ -118,5 +127,6 @@ public class Task {
     public String getContactName() {
         return contactName;
     }
+
 
 }

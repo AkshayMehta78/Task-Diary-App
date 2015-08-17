@@ -19,6 +19,11 @@
             android:icon="@drawable/diary"
             android:title="View Diary"/>
 
+        <item
+            android:id="@+id/viewcompletedTask"
+            android:icon="@drawable/diary"
+            android:title="View Completed Task"/>
+
     </group>
 
 </menu>

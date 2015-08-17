@@ -39,8 +39,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/app_color"
-        android:text="Sort by Category"
+        android:text="Filter by Category"
         android:padding="@dimen/padding_large"
+        android:visibility="gone"
         android:gravity="center"
         android:id="@+id/tvSort" />
 </RelativeLayout>

@@ -4,7 +4,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="label">Label</string>
-    <string name="description">write about the task</string>
+    <string name="description">Write about the task</string>
     <string name="selectCategory">Select task category</string>
     <string name="selectpriority">Select task priority</string>
     <string name="selectType">Select Assignee</string>
@@ -50,4 +50,5 @@
     <string name="share">Share</string>
     <string name="email_subject">Task Details</string>
     <string name="empty_reminder">Please add reminder</string>
+    <string name="done">Delete</string>
 </resources>

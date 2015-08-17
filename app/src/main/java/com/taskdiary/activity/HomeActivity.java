@@ -38,7 +38,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private PagerAdapter pagerAdapter;
     private ArrayList<Fragment> mFragments;
     private ViewPager mViewPager;
-    private String[] mTabTitles = {"Todays\'s", "Pending", "Completed"};
+    private String[] mTabTitles = {"Today", "Pending", "Completed"};
     private Toolbar mToolbar;
     private FloatingActionButton addTaskFloatingButton;
     private DrawerLayout drawerLayout;
@@ -164,6 +164,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.view_diary:
                         Intent allTaskIntent = new Intent(HomeActivity.this,ViewAllTaskActivity.class);
                         startActivity(allTaskIntent);
+                        break;
+                    case R.id.viewcompletedTask:
+                        Intent completedIntent = new Intent(HomeActivity.this,ViewCompletedTaskActivity.class);
+                        startActivity(completedIntent);
+                        break;
                     default:
                 }
                 drawerLayout.closeDrawers();

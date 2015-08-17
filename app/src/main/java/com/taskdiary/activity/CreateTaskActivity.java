@@ -364,8 +364,8 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
 
     private void addTaskToDatabase() {
         Task item = new Task();
-        item.setTitle(labelEditText.getText().toString().trim());
-        item.setDesc(descriptionEditText.getText().toString().trim());
+        item.setTitle(labelEditText.getText().toString().trim().substring(0,1).toUpperCase().toString()+labelEditText.getText().toString().trim().substring(1,labelEditText.getText().toString().length()));
+        item.setDesc(descriptionEditText.getText().toString().trim().substring(0, 1).toUpperCase().toString() + descriptionEditText.getText().toString().trim().substring(1, descriptionEditText.getText().toString().length()));
         item.setCategory(selectedCatgeoryTextView.getText().toString());
         item.setPriority(selectedPriorityTextView.getText().toString());
         item.setType(selectedTypeTextView.getText().toString());

@@ -12,6 +12,6 @@
         android:id="@+id/delete"
         android:orderInCategory="100"
         android:title="@string/delete"
-        android:visible="true"
+        android:visible="false"
         app:showAsAction="always" />
 </menu>

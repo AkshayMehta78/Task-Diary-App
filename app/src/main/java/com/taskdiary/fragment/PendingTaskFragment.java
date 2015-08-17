@@ -102,7 +102,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
                         // Calls getSelectedIds method from ListViewAdapter Class
                         SparseBooleanArray Idsselected;
                         Idsselected = pAdapter.getSelectedIds();
-                        String message="";
+                        String emailMessage="",smsMessage="";
                         boolean flag = true;
 
                         int contactId = Integer.parseInt(pAdapter.getItem(Idsselected.keyAt(0)).getContactIDs());
@@ -112,7 +112,13 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
                                 Task selecteditem = pAdapter.getItem(Idsselected.keyAt(i));
                                 if(contactId == Integer.parseInt(selecteditem.getContactIDs()))
                                 {
-                                    message = message + "Title:\t"+selecteditem.getTitle()+"\nDescription:\t"+ selecteditem.getDesc()+"\n-------------------------------------------------\n";
+                                    emailMessage = emailMessage + "Title:\t"+selecteditem.getTitle();
+                                    if(!selecteditem.getDesc().isEmpty())
+                                        emailMessage = emailMessage +"\nDescription:\t"+ selecteditem.getDesc()+"\n-------------------------------------------------\n";
+                                    else
+                                        emailMessage = emailMessage +"\n--------------------------------------";
+
+                                    smsMessage = smsMessage + "Title:\t"+selecteditem.getTitle()+"\n----------------------";
                                 }
                                 else {
                                     Utils.showToast(getActivity(), "Please Select Task from same user");
@@ -121,7 +127,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
                             }
                         }
                         if(flag) {
-                            openShareDialog(contactId + "", message);
+                            openShareDialog(contactId + "", emailMessage,smsMessage);
                         //    OpenSharingIntent(message);
                             mode.finish();
                         }
@@ -183,11 +189,11 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
         {
             taskListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
             if(flag==0) {
-                tvSort.setText("Sort by Task");
+                tvSort.setText("Filter by Task");
                 setUpTaskByPerson();
             } else
             {
-                tvSort.setText("Sort by Person");
+                tvSort.setText("Filter by Person");
                 setUpTaskList();
             }
         }
@@ -258,7 +264,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
 
     private void initialization() {
         db=new DatabaseHelper(getActivity());
-        tvSort.setText("Sort by Person");
+        tvSort.setText("Filter by Person");
         taskListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
     }
 
@@ -274,7 +280,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
             super.setUserVisibleHint(isVisibleToUser);
             if (isVisibleToUser) {
                 setUpTaskList();
-                tvSort.setText("Sort by Person");
+                tvSort.setText("Filter by Person");
             }
         }catch (Exception e)
         {
@@ -283,7 +289,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
     }
 
 
-    private void openShareDialog(final String contactid, final String message) {
+    private void openShareDialog(final String contactid, final String message, final String smsMessage) {
         new MaterialDialog.Builder(getActivity())
                 .title(R.string.share_with)
                 .items(R.array.shareItems)
@@ -298,7 +304,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
                         } else if (which == 1) {
                             String contactNo = Utils.getContactNumber(contactid, getActivity().getApplicationContext());
                             if (!contactNo.isEmpty())
-                                Utils.sendSMSDialog(getActivity(), contactNo, message);
+                                Utils.sendSMSDialog(getActivity(), contactNo, smsMessage);
                             else
                                 Utils.showToast(getActivity(), getString(R.string.no_number));
                         } else {

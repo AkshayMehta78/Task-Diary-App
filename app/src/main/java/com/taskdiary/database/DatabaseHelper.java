@@ -170,10 +170,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 item.setCompleted(c.getString(c.getColumnIndex(KEY_COMPLETED)));
                 item.setDeleted(c.getString(c.getColumnIndex(KEY_DELETED)));
                 item.setContactIDs(c.getString(c.getColumnIndex(KEY_CONTACTS_ID)));
+                item.setTaskStatus(getTaskStatus(c.getString(c.getColumnIndex(KEY_ID))));
                 result.add(item);
             } while (c.moveToNext());
         }
         return result;
+    }
+
+    private boolean getTaskStatus(String taskId) {
+        boolean flag=true;
+        String selectQuery = "SELECT  * FROM " + TABLE_REMINDER + " WHERE " + KEY_TASKID + "='"+taskId+"'";
+        Cursor c = db.rawQuery(selectQuery, null);
+        if (c.moveToFirst()) {
+            do {
+                Log.e("completed",c.getString(c.getColumnIndex(KEY_COMPLETED)));
+                if(!c.getString(c.getColumnIndex(KEY_COMPLETED)).equals("1")) {
+                    flag = false;
+                }
+            } while (c.moveToNext());
+        }
+
+    return flag;
     }
 
     private String getAllCompletedDayIds() {
@@ -390,7 +407,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             String selectQuery ="";
             String Ids = getAllPreviousDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_CONTACTS_ID+" like '%"+contactIds.get(i)+"%' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  DISTINCT id,title,desc,category,priority,type,date,completed,deleted FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_CONTACTS_ID+" like '%"+contactIds.get(i)+"%' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
 
             Log.e("query",selectQuery);
             Cursor c = db.rawQuery(selectQuery, null);
