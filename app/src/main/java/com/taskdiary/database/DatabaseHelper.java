@@ -152,7 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
         }
         else
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_DELETED+"='0' ORDER BY " + KEY_ID + " DESC";
 
         Log.e("query",selectQuery);
         Cursor c = db.rawQuery(selectQuery, null);
@@ -170,8 +170,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 item.setCompleted(c.getString(c.getColumnIndex(KEY_COMPLETED)));
                 item.setDeleted(c.getString(c.getColumnIndex(KEY_DELETED)));
                 item.setContactIDs(c.getString(c.getColumnIndex(KEY_CONTACTS_ID)));
-                item.setTaskStatus(getTaskStatus(c.getString(c.getColumnIndex(KEY_ID))));
-                result.add(item);
+                boolean taskstatus =  getTaskStatus(c.getString(c.getColumnIndex(KEY_ID)));
+                item.setTaskStatus(taskstatus);
+                if(status.equalsIgnoreCase("") && taskstatus)
+                    result.add(item);
+                else if(status.equalsIgnoreCase(Constant.COMPLETE)||status.equalsIgnoreCase(Constant.INCOMPLETE)||status.equalsIgnoreCase(Constant.PENDING))
+                    result.add(item);
             } while (c.moveToNext());
         }
         return result;
@@ -184,7 +188,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 Log.e("completed",c.getString(c.getColumnIndex(KEY_COMPLETED)));
-                if(!c.getString(c.getColumnIndex(KEY_COMPLETED)).equals("1")) {
+                if(c.getString(c.getColumnIndex(KEY_COMPLETED)).equals("0")) {
                     flag = false;
                 }
             } while (c.moveToNext());

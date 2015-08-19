@@ -189,11 +189,11 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
         {
             taskListView.setChoiceMode(ListView.CHOICE_MODE_NONE);
             if(flag==0) {
-                tvSort.setText("Filter by Task");
+                tvSort.setText("Sort by Task");
                 setUpTaskByPerson();
             } else
             {
-                tvSort.setText("Filter by Person");
+                tvSort.setText("Sort by Person");
                 setUpTaskList();
             }
         }
@@ -280,7 +280,7 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
             super.setUserVisibleHint(isVisibleToUser);
             if (isVisibleToUser) {
                 setUpTaskList();
-                tvSort.setText("Filter by Person");
+                tvSort.setText("Sort by Person");
             }
         }catch (Exception e)
         {

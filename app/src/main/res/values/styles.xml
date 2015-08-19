@@ -5,6 +5,8 @@
         <!-- Customize your theme here. -->
         <item name="colorAccent">@color/app_color</item>
         <item name="colorPrimary">@color/app_color</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activatedbackground</item>
+
     </style>
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">

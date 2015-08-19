@@ -151,7 +151,6 @@ public class ViewCompletedTaskActivity extends AppCompatActivity{
     private void setUpTaskList() {
         result = new ArrayList<Task>();
         result = db.getAllTask("");
-        result = filterList();
         if(result.size()>0)
         {
             emptyTextView.setVisibility(View.GONE);
@@ -166,20 +165,6 @@ public class ViewCompletedTaskActivity extends AppCompatActivity{
         }
     }
 
-    private ArrayList<Task> filterList() {
-        ArrayList<Task> dummyList = result;
-        if(dummyList.size()>0)
-        {
-            for(int i= 0;i<dummyList.size();i++)
-            {
-                Task item = dummyList.get(i);
-                Log.e("task",item.getTaskStatus()+"");
-                if(!item.getTaskStatus())
-                    result.remove(i);
-            }
-        }
-        return result;
-    }
 
 
     @Override

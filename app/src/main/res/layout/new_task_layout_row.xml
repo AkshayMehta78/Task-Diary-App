@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="?android:attr/activatedBackgroundIndicator"
     android:orientation="vertical">
 
     <LinearLayout
@@ -17,9 +17,8 @@
             android:layout_weight=".3"
             android:layout_height="match_parent"
             android:padding="@dimen/padding_large"
-            android:background="?android:attr/activatedBackgroundIndicator"
             android:src="@drawable/check"
-            android:visibility="visible"
+            android:visibility="gone"
             />
 
         <TextView
@@ -28,7 +27,6 @@
             android:layout_weight="1.65"
             android:layout_height="wrap_content"
             android:padding="@dimen/padding_large"
-            android:text="AKSHAY MEHTA"
             android:textColor="@color/black"
             android:textSize="@dimen/text_size_large"
             android:gravity="center_vertical"
@@ -39,6 +37,7 @@
             android:layout_width="0dp"
             android:layout_weight="0.05"
             android:layout_height="fill_parent"
+            android:visibility="gone"
             android:background="@color/app_color"></View>
 
     </LinearLayout>

@@ -25,7 +25,8 @@
         android:textColor="@color/black"
         android:padding="@dimen/padding_large"
         android:layout_marginTop="@dimen/margin_large"
-        android:inputType="textCapWords|textCapSentences"
+        android:inputType="text"
+        android:capitalize="words"
         />
 
 

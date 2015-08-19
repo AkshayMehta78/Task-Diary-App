@@ -68,11 +68,11 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         holder.tvTitle.setText(item.getTitle());
 
         if(item.getPriority().equalsIgnoreCase(Constant.HIGH))
-            holder.viewPriority.setBackgroundColor(activity.getResources().getColor(R.color.error_color));
+            holder.tvTitle.setTextColor(activity.getResources().getColor(R.color.error_color));
         else if(item.getPriority().equalsIgnoreCase(Constant.MEDIUM))
-            holder.viewPriority.setBackgroundColor(activity.getResources().getColor(R.color.orange));
+            holder.tvTitle.setTextColor(activity.getResources().getColor(R.color.orange));
         else
-            holder.viewPriority.setBackgroundColor(activity.getResources().getColor(R.color.app_color));
+            holder.tvTitle.setTextColor(activity.getResources().getColor(R.color.app_color));
 
 
 
