@@ -33,7 +33,7 @@ public class Constant {
     public static final int CREATE = 0;
     public static final int VIEW = 1;
     public static final int EDIT = 2;
-
+    public static final String ALL = "All";
 
 
     public static String CATEGORY="category";

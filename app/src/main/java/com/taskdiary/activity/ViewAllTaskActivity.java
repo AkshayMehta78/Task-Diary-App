@@ -164,7 +164,7 @@ public class ViewAllTaskActivity extends AppCompatActivity implements View.OnCli
 
     private void setUpTaskList() {
         result = new ArrayList<Task>();
-        result = db.getAllTask("");
+        result = db.getAllTask(Constant.ALL);
         if(result.size()>0)
         {
             emptyTextView.setVisibility(View.GONE);

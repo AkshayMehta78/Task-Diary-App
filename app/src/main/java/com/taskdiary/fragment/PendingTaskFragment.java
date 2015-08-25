@@ -112,13 +112,13 @@ public class PendingTaskFragment extends Fragment implements View.OnClickListene
                                 Task selecteditem = pAdapter.getItem(Idsselected.keyAt(i));
                                 if(contactId == Integer.parseInt(selecteditem.getContactIDs()))
                                 {
-                                    emailMessage = emailMessage + "Title:\t"+selecteditem.getTitle();
+                                    emailMessage = emailMessage + selecteditem.getTitle();
                                     if(!selecteditem.getDesc().isEmpty())
-                                        emailMessage = emailMessage +"\nDescription:\t"+ selecteditem.getDesc()+"\n-------------------------------------------------\n";
+                                        emailMessage = emailMessage +": "+ selecteditem.getDesc()+"\n-------------------------------------------------\n";
                                     else
                                         emailMessage = emailMessage +"\n--------------------------------------";
 
-                                    smsMessage = smsMessage + "Title:\t"+selecteditem.getTitle()+"\n----------------------";
+                                    smsMessage = smsMessage +selecteditem.getTitle()+"\n----------------------";
                                 }
                                 else {
                                     Utils.showToast(getActivity(), "Please Select Task from same user");

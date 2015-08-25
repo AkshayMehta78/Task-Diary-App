@@ -198,7 +198,7 @@ public class Utils {
         Uri uri = Uri.parse("smsto:" + contactNo);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
 //        it.putExtra(taskDetails.getTitle(), taskDetails.getDesc());
-        it.putExtra("sms_body","Title : "+taskDetails.getTitle()+"\nDescription: "+taskDetails.getDesc());
+        it.putExtra("sms_body",taskDetails.getTitle()+": "+taskDetails.getDesc());
         activity.startActivity(it);
     }
 
@@ -334,7 +334,7 @@ public class Utils {
         emailIntent.setType("vnd.android.cursor.item/email");
         emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{emailId});
         emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, activity.getString(R.string.email_subject));
-        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Title : "+taskDetails.getTitle()+"\nDescription: "+taskDetails.getDesc());
+        emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, taskDetails.getTitle()+":"+taskDetails.getDesc());
         activity.startActivity(Intent.createChooser(emailIntent, "Send mail using..."));
     }
 
@@ -351,7 +351,6 @@ public class Utils {
     public static void sendSMSDialog(Activity activity, String contactNo, String message) {
         Uri uri = Uri.parse("smsto:" + contactNo);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
-//        it.putExtra(taskDetails.getTitle(), taskDetails.getDesc());
         it.putExtra("sms_body",message);
         activity.startActivity(it);
     }

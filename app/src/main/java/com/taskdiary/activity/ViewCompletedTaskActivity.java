@@ -145,6 +145,7 @@ public class ViewCompletedTaskActivity extends AppCompatActivity{
     private void setupToolbar() {
         setSupportActionBar(mToolbar);
         final ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(R.string.completed_task);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 

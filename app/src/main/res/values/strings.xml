@@ -51,4 +51,6 @@
     <string name="email_subject">Task Details</string>
     <string name="empty_reminder">Please add reminder</string>
     <string name="done">Delete</string>
+    <string name="completed_task">Completed Task</string>
+    <string name="remove">Remove</string>
 </resources>

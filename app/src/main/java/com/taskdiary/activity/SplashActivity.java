@@ -1,12 +1,10 @@
 package com.taskdiary.activity;
 
 import android.app.Activity;
-import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Handler;
 
+import com.splunk.mint.Mint;
 import com.taskdiary.database.DatabaseHelper;
 import com.taskdiary.utils.Constant;
 import com.taskdiary.utils.Utils;
@@ -22,6 +20,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        Mint.initAndStartSession(SplashActivity.this, "125ddbf4");
 
         db=new DatabaseHelper(this);
         defaultList = new ArrayList<String>();

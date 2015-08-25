@@ -4,7 +4,18 @@ package com.taskdiary.model;
  * Created by akshaymehta on 09/08/15.
  */
 public class Reminder {
-    String date,time;
+    String date;
+    String time;
+
+    public String getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(String completed) {
+        this.completed = completed;
+    }
+
+    String completed;
     int id;
 
     public int getId() {

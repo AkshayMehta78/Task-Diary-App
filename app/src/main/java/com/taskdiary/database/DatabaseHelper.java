@@ -127,13 +127,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void addReminderList(ArrayList<Reminder> list, long taskId) {
         for(int i = 0;i<list.size();i++)
         {
-            ContentValues values = new ContentValues();
-            values.put(KEY_TASKID, taskId);
-            values.put(KEY_DATE,list.get(i).getDate());
-            values.put(KEY_TIME, list.get(i).getTime());
-            values.put(KEY_COMPLETED,0);
-            db.insert(TABLE_REMINDER, null, values);
+                ContentValues values = new ContentValues();
+                values.put(KEY_TASKID, taskId);
+                values.put(KEY_DATE, list.get(i).getDate());
+                values.put(KEY_TIME, list.get(i).getTime());
+                values.put(KEY_COMPLETED, 0);
+                db.insert(TABLE_REMINDER, null, values);
         }
+    }
+
+    private boolean isExist(long taskId, Reminder reminder) {
+        boolean flag=false;
+        ArrayList<Reminder> remindersList = getAllTaskReminders((int)taskId);
+        for(int i = 0;i<remindersList.size();i++)
+        {
+            if(remindersList.get(i).getDate().equalsIgnoreCase(reminder.getDate()) || remindersList.get(i).getCompleted().equalsIgnoreCase(Constant.COMPLETE))
+                {
+                    flag= true;
+                }else
+                {
+                    deleteARemindersOfTask((int)taskId,remindersList.get(i).getDate());
+                }
+        }
+        return flag;
     }
 
     public ArrayList<Task> getAllTask(String status) {
@@ -141,18 +157,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String selectQuery ="";
         if(status.equalsIgnoreCase(Constant.COMPLETE)) {
             String Ids = getAllCompletedDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE " + KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE " + KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0  ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
         }else if(status.equalsIgnoreCase(Constant.INCOMPLETE))
         {
             String Ids = getAllCurrentDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0   ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
         }else if(status.equalsIgnoreCase(Constant.PENDING))
         {
             String Ids = getAllPreviousDayIds();
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_DELETED+"=0  ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
         }
-        else
-            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_DELETED+"='0' ORDER BY " + KEY_ID + " DESC";
+        else if(status.equalsIgnoreCase(Constant.ALL) || status.equalsIgnoreCase(""))
+            selectQuery = "SELECT  * FROM " + TABLE_TASK + " WHERE "+KEY_DELETED+"='0'  ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
 
         Log.e("query",selectQuery);
         Cursor c = db.rawQuery(selectQuery, null);
@@ -174,7 +190,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 item.setTaskStatus(taskstatus);
                 if(status.equalsIgnoreCase("") && taskstatus)
                     result.add(item);
-                else if(status.equalsIgnoreCase(Constant.COMPLETE)||status.equalsIgnoreCase(Constant.INCOMPLETE)||status.equalsIgnoreCase(Constant.PENDING))
+                else if(status.equalsIgnoreCase(Constant.COMPLETE)||status.equalsIgnoreCase(Constant.INCOMPLETE)||status.equalsIgnoreCase(Constant.PENDING)||status.equalsIgnoreCase(Constant.ALL))
                     result.add(item);
             } while (c.moveToNext());
         }
@@ -313,6 +329,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 item.setId(c.getInt(c.getColumnIndex(KEY_ID)));
                 item.setDate(c.getString(c.getColumnIndex(KEY_DATE)));
                 item.setTime(c.getString(c.getColumnIndex(KEY_TIME)));
+                item.setCompleted(c.getString(c.getColumnIndex(KEY_COMPLETED)));
                 result.add(item);
             } while (c.moveToNext());
         }
@@ -363,10 +380,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void deleteAllRemindersOfTask(int taskID) {
-        db.execSQL("DELETE FROM " + TABLE_REMINDER + " WHERE " + KEY_TASKID + "=" + taskID);
-
+        db.execSQL("DELETE FROM " + TABLE_REMINDER + " WHERE " + KEY_TASKID + "=" + taskID+" AND "+KEY_COMPLETED+"!='"+Constant.COMPLETE+"'");
     }
-
+    private void deleteARemindersOfTask(int taskID,String date) {
+        db.execSQL("DELETE FROM " + TABLE_REMINDER + " WHERE " + KEY_TASKID + "=" + taskID+" AND "+KEY_DATE+"='"+date+"'");
+    }
     public ArrayList<Task> getAllTaskByCategory(String status, String category) {
         ArrayList<Task> result = new ArrayList<Task>();
         String selectQuery = "SELECT  * FROM " + TABLE_TASK + " ORDER BY " + KEY_ID + " DESC";
@@ -411,7 +429,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             String selectQuery ="";
             String Ids = getAllPreviousDayIds();
-            selectQuery = "SELECT  DISTINCT id,title,desc,category,priority,type,date,completed,deleted FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_CONTACTS_ID+" like '%"+contactIds.get(i)+"%' AND "+KEY_DELETED+"=0 ORDER BY " + KEY_ID + " DESC";
+            selectQuery = "SELECT  DISTINCT id,title,desc,category,priority,type,date,completed,deleted FROM " + TABLE_TASK + " WHERE "+KEY_ID+" IN "+Ids+" AND "+KEY_TYPE+"='Group' AND "+KEY_CONTACTS_ID+" like '%"+contactIds.get(i)+"%' AND "+KEY_DELETED+"=0  ORDER BY CASE WHEN "+KEY_PRIORITY+"='High' THEN 1 WHEN "+KEY_PRIORITY+"='Medium' THEN 2 WHEN "+KEY_PRIORITY+"='Low' THEN 3 END ASC";
 
             Log.e("query",selectQuery);
             Cursor c = db.rawQuery(selectQuery, null);

@@ -39,7 +39,7 @@ import java.util.Locale;
 /**
  * Created by akshaymehta on 08/08/15.
  */
-public class ViewTaskDetails extends AppCompatActivity implements View.OnClickListener,View.OnLongClickListener {
+public class ViewTaskDetails extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private EditText labelTextView, descriptionTextView, dateTextView;
@@ -66,6 +66,7 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
     private TextView addReminderTextView;
 
     private ScrollView scrollableView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +125,7 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
         selectedTypeTextView.setText(taskDetails.getType());
 
         if (taskDetails.getType().equalsIgnoreCase("Group")) {
-            Log.e("group",taskDetails.getContactIDs());
+            Log.e("group", taskDetails.getContactIDs());
             groupLayout.setVisibility(View.VISIBLE);
             contactIDs = Utils.formatStringToArray(taskDetails.getContactIDs());
             if (contactIDs.size() > 0) {
@@ -153,25 +154,24 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        if (v == contactImage1){
+        if (v == contactImage1) {
             id = 1;
             startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
         }
         if (v == contactImage2) {
-            if(contactIDs.size()==1) {
+            if (contactIDs.size() >= 1) {
                 id = 2;
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
-            }else
-                Utils.showToast(getApplicationContext(),"Please Select Previous Contact First");
+            } else
+                Utils.showToast(getApplicationContext(), "Please Select Previous Contact First");
 
         }
         if (v == contactImage3) {
-            if(contactIDs.size()==2) {
+            if (contactIDs.size() >= 2) {
                 id = 3;
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
-            }
-            else
-                Utils.showToast(getApplicationContext(),"Please Select Previous Contact First");
+            } else
+                Utils.showToast(getApplicationContext(), "Please Select Previous Contact First");
         }
 
         if (v == selectPriorityTextView) {
@@ -185,32 +185,60 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
         }
 
 
-        if(v == addReminderTextView)
-        {
+        if (v == addReminderTextView) {
             //    addReminderDialog();
-            if(remindersList.size()==0) {
+            if (remindersList.size() == 0) {
                 new DatePickerDialog(ViewTaskDetails.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }else
-            {
+            } else {
                 openMultipleOptionForDate();
             }
         }
     }
 
-    private void openShareDialog(final String contactid) {
+    public boolean hasIndex(int index) {
+        if (index < contactIDs.size())
+            return true;
+        return false;
+    }
+
+    private void openShareDialog(final String contactid, final int index, final int i) {
         new MaterialDialog.Builder(this)
                 .title(R.string.share_with)
                 .items(R.array.shareItems)
                 .theme(Theme.LIGHT)
+                .neutralText(R.string.remove)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onNeutral(MaterialDialog dialog) {
+                        if (i == 0) {
+                            contactIDs.remove(index);
+                            contactName1.setText("Contact Name");
+                            contactImage1.setImageResource(R.drawable.add_user);
+                            Utils.showToast(getApplicationContext(), "Removed");
+                        }
+                        if (i == 1) {
+                            contactIDs.remove(index);
+                            contactName2.setText("Contact Name");
+                            contactImage2.setImageResource(R.drawable.add_user);
+                            Utils.showToast(getApplicationContext(), "Removed");
+                        }
+                        if (i == 2) {
+                            contactIDs.remove(index);
+                            contactName3.setText("Contact Name");
+                            contactImage3.setImageResource(R.drawable.add_user);
+                            Utils.showToast(getApplicationContext(), "Removed");
+                        }
+                    }
+                })
                 .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
                     public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                         if (which == 0) {
                             String emailId = Utils.retrieveContactEmail(contactid, getApplicationContext());
-                            if (emailId!=null)
-                                Utils.showEmailDialog(ViewTaskDetails.this, emailId,taskDetails);
+                            if (emailId != null)
+                                Utils.showEmailDialog(ViewTaskDetails.this, emailId, taskDetails);
                         } else if (which == 1) {
                             String contactNo = Utils.getContactNumber(contactid, getApplicationContext());
                             if (!contactNo.isEmpty())
@@ -233,7 +261,7 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
 
     private void getWidgetReferences() {
 
-        scrollableView  = (ScrollView) findViewById(R.id.scrollableView);
+        scrollableView = (ScrollView) findViewById(R.id.scrollableView);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         labelTextView = (EditText) findViewById(R.id.labelTextView);
         descriptionTextView = (EditText) findViewById(R.id.descriptionTextView);
@@ -281,7 +309,7 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
     private void initialization() {
         db = new DatabaseHelper(this);
         contactIDs = new ArrayList<String>();
-        remindersList =new ArrayList<Reminder>();
+        remindersList = new ArrayList<Reminder>();
     }
 
     private void setupToolbar() {
@@ -434,10 +462,8 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
             Utils.showToast(this, getString(R.string.empty_type));
             return flag;
         }
-        if(selectedTypeTextView.getText().toString().equalsIgnoreCase("Group"))
-        {
-            if(contactIDs.size()==0)
-            {
+        if (selectedTypeTextView.getText().toString().equalsIgnoreCase("Group")) {
+            if (contactIDs.size() == 0) {
                 Utils.showToast(this, getString(R.string.select_contact));
                 flag = false;
                 return flag;
@@ -454,81 +480,100 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
         item.setPriority(selectedPriorityTextView.getText().toString());
         item.setType(selectedTypeTextView.getText().toString());
         item.setDate(Utils.getCurrentDate());
-        if(selectedTypeTextView.getText().toString().equalsIgnoreCase("Group"))
-        {
+        if (selectedTypeTextView.getText().toString().equalsIgnoreCase("Group")) {
             item.setContactIDs(contactIDs.toString());
         }
         item.setList(remindersList);
         db.updateTaskDetails(item, taskID);
-
     }
 
 
     @Override
     public boolean onLongClick(View v) {
+//        if (v == contactImage1) {
+//            if (contactIDs.size()>=1)
+//                openShareDialog(contactIDs.get(0).trim(),0);
+//        }
+//        if (v == contactImage2) {
+//            if (contactIDs.size()>=2)
+//                openShareDialog(contactIDs.get(1).trim(),1);
+//        }
+//        if (v == contactImage3) {
+//            if (contactIDs.size()>=3)
+//                openShareDialog(contactIDs.get(2).trim(),2);
+//        }
         if (v == contactImage1) {
-            if (contactIDs.size()>=1)
-                openShareDialog(contactIDs.get(0).trim());
+            if (hasIndex(0))
+                openShareDialog(contactIDs.get(0).trim(), 0,0);
         }
         if (v == contactImage2) {
-            if (contactIDs.size()>=2)
-                openShareDialog(contactIDs.get(1).trim());
-        }
-        if (v == contactImage3) {
-            if (contactIDs.size()>=3)
-                openShareDialog(contactIDs.get(2).trim());
-        }
-
-        return false;
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
-            Log.d("Response", "Response: " + data.toString());
-            uriContact = data.getData();
-            contactID = Utils.getContactID(uriContact, this);
-            String name = Utils.retrieveContactName(contactID, this);
-            Bitmap imageData = Utils.retrieveContactPhoto(contactID, this);
-            setContactDetails(name, imageData);
-            if(contactIDs.size()<3)
-                contactIDs.add(id-1,contactID);
-            else
-                contactIDs.set(id-1,contactID);
-        }
-    }
-
-
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                              int dayOfMonth) {
-            // TODO Auto-generated method stub
-            if(view.isShown()) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                // setDate();
-                setSelectedDate();
+            if (hasIndex(1)) {
+                openShareDialog(contactIDs.get(1).trim(), 1,1);
+            } else if (hasIndex(0)) {
+                openShareDialog(contactIDs.get(0).trim(), 0,1);
             }
         }
-    };
+        if (v == contactImage3) {
+            if (hasIndex(2)) {
+                openShareDialog(contactIDs.get(2).trim(), 2,2);
+            } else if (hasIndex(1)) {
+                openShareDialog(contactIDs.get(1).trim(), 1,2);
+            } else if (hasIndex(0)) {
+                openShareDialog(contactIDs.get(0).trim(), 0,2);
+            }
+        }
+            return true;
+        }
+        @Override
+        protected void onActivityResult ( int requestCode, int resultCode, Intent data){
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
+                Log.d("Response", "Response: " + data.toString());
+                uriContact = data.getData();
+                contactID = Utils.getContactID(uriContact, this);
+                String name = Utils.retrieveContactName(contactID, this);
+                Bitmap imageData = Utils.retrieveContactPhoto(contactID, this);
+                setContactDetails(name, imageData);
+                if (contactIDs.size() < 3) {
+                    if (contactIDs.size() == id - 1)
+                        contactIDs.add(id - 1, contactID);
+                    else
+                        contactIDs.set(id - 1, contactID);
+                } else
+                    contactIDs.set(id - 1, contactID);
+            }
+        }
+
+
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                if (view.isShown()) {
+                    myCalendar.set(Calendar.YEAR, year);
+                    myCalendar.set(Calendar.MONTH, monthOfYear);
+                    myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    // setDate();
+                    setSelectedDate();
+                }
+            }
+        };
 
     private void setSelectedDate() {
         SimpleDateFormat sdf = new SimpleDateFormat(Constant.DATEFORMAT, Locale.US);
         String selectedDate = sdf.format(myCalendar.getTime());
-        if(Utils.isDateValid(selectedDate)) {
+        if (Utils.isDateValid(selectedDate)) {
             Reminder item = new Reminder();
             item.setDate(selectedDate);
             item.setTime("");
+            item.setCompleted(Constant.INCOMPLETE);
             remindersList.add(item);
             rAdapter.notifyDataSetChanged();
-        }else
-            Utils.showToast(this,getString(R.string.invalid_date));
+        } else
+            Utils.showToast(this, getString(R.string.invalid_date));
     }
 
     private void openMultipleOptionForDate() {
@@ -570,15 +615,15 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
 
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        if(value==0)
+                        if (value == 0)
                             days = Integer.parseInt(text.toString()) * 7;
-                        else if(value==1)
+                        else if (value == 1)
                             days = Integer.parseInt(text.toString()) * 30;
 
                         String previousDate = remindersList.get(remindersList.size() - 1).getDate();
                         Calendar cal = Calendar.getInstance();
                         cal.setTime(Utils.getDateFromString(previousDate));
-                        cal.add(Calendar.DATE,days);
+                        cal.add(Calendar.DATE, days);
                         myCalendar = cal;
                         setSelectedDate();
                     }
@@ -598,7 +643,7 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
                         String previousDate = remindersList.get(remindersList.size() - 1).getDate();
                         Calendar cal = Calendar.getInstance();
                         cal.setTime(Utils.getDateFromString(previousDate));
-                        cal.add(Calendar.DATE,days);
+                        cal.add(Calendar.DATE, days);
                         myCalendar = cal;
                         setSelectedDate();
                     }

@@ -40,7 +40,7 @@ import java.util.Locale;
 /**
  * Created by akshaymehta on 06/08/15.
  */
-public class CreateTaskActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
+public class CreateTaskActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener,View.OnLongClickListener {
     private Toolbar mToolbar;
     private EditText labelEditText, descriptionEditText, dateEditText;
     private TextView selectCategoryTextView, selectedCatgeoryTextView, selectPriorityTextView, selectedPriorityTextView, selectTypeTextView, selectedTypeTextView;
@@ -114,6 +114,10 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
         contactImage2.setOnClickListener(this);
         contactImage3.setOnClickListener(this);
 
+        contactImage1.setOnLongClickListener(this);
+        contactImage2.setOnLongClickListener(this);
+        contactImage3.setOnLongClickListener(this);
+
         addReminderTextView.setOnClickListener(this);
 
     }
@@ -158,7 +162,7 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
         }
         if (v == contactImage2) {
-            if(contactIDs.size()==1) {
+            if(contactIDs.size()>=1) {
                 id = 2;
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
             }else
@@ -166,7 +170,7 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
 
         }
         if (v == contactImage3) {
-            if(contactIDs.size()==2) {
+            if(contactIDs.size()>=2) {
                 id = 3;
                 startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
             }
@@ -282,6 +286,7 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
             Reminder item = new Reminder();
             item.setDate(selectedDate);
             item.setTime("");
+            item.setCompleted(Constant.INCOMPLETE);
             remindersList.add(item);
             rAdapter.notifyDataSetChanged();
         }else
@@ -390,27 +395,31 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
             String name = Utils.retrieveContactName(contactID, this);
             Bitmap imageData = Utils.retrieveContactPhoto(contactID, this);
             setContactDetails(name, imageData);
+
+            if(contactIDs.size()==id-1)
+                contactIDs.add(id - 1, contactID);
+            else
+                contactIDs.set(id - 1, contactID);
         }
     }
 
     private void setContactDetails(String name, Bitmap imageData) {
         try {
             if (id == 1) {
-                contactIDs.add(id-1,contactID);
                 if (imageData != null)
                     contactImage1.setImageBitmap(imageData);
                 else
                     contactImage1.setImageResource(R.drawable.default_user);
                 contactName1.setText(name);
             } else if (id == 2) {
-                contactIDs.add(id-1,contactID);
+
                 if (imageData != null)
                     contactImage2.setImageBitmap(imageData);
                 else
                     contactImage2.setImageResource(R.drawable.default_user);
                 contactName2.setText(name);
             } else if (id == 3) {
-                contactIDs.add(id-1,contactID);
+
                 if (imageData != null)
                     contactImage3.setImageBitmap(imageData);
                 else
@@ -476,7 +485,7 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
                 mTimePicker = new TimePickerDialog(CreateTaskActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        tvTime.setText( Utils.getTime(selectedHour,selectedMinute));
+                        tvTime.setText(Utils.getTime(selectedHour, selectedMinute));
                         isDateTimeSet = true;
                     }
                 }, hour, minute, false);//Yes 24 hour time
@@ -540,15 +549,15 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                        if(value==0)
-                             days = Integer.parseInt(text.toString()) * 7;
-                        else if(value==1)
-                             days = Integer.parseInt(text.toString()) * 30;
- 
+                        if (value == 0)
+                            days = Integer.parseInt(text.toString()) * 7;
+                        else if (value == 1)
+                            days = Integer.parseInt(text.toString()) * 30;
+
                         String previousDate = remindersList.get(remindersList.size() - 1).getDate();
                         Calendar cal = Calendar.getInstance();
                         cal.setTime(Utils.getDateFromString(previousDate));
-                        cal.add(Calendar.DATE,days);
+                        cal.add(Calendar.DATE, days);
                         myCalendar = cal;
                         setSelectedDate();
                     }
@@ -574,5 +583,49 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
                     }
                 }).show();
     }
+
+    @Override
+    public boolean onLongClick(View v) {
+        if (v == contactImage1) {
+            if(hasIndex(0)) {
+                contactIDs.remove(0);
+                contactName1.setText("Contact Name");
+                contactImage1.setImageResource(R.drawable.add_user);
+                Utils.showToast(getApplicationContext(), "Removed");
+            }
+        }
+        if (v == contactImage2) {
+            if(hasIndex(1)) {
+                contactIDs.remove(1);
+            }else if(hasIndex(0)) {
+                contactIDs.remove(0);
+            }
+                contactName2.setText("Contact Name");
+                contactImage2.setImageResource(R.drawable.add_user);
+                Utils.showToast(getApplicationContext(), "Removed");
+        }
+        if (v == contactImage3) {
+            if(hasIndex(2)) {
+                contactIDs.remove(2);
+            }else if(hasIndex(1)) {
+                contactIDs.remove(1);
+            }else if(hasIndex(0)) {
+                contactIDs.remove(0);
+            }
+                contactName3.setText("Contact Name");
+                contactImage3.setImageResource(R.drawable.add_user);
+                Utils.showToast(getApplicationContext(), "Removed");
+
+        }
+
+        return true;
+    }
+
+    public boolean hasIndex(int index){
+        if(index < contactIDs.size())
+            return true;
+        return false;
+    }
+
 
 }
