@@ -128,7 +128,6 @@ public class Utils {
 
         String contactID = "";
         if (cursorID.moveToFirst()) {
-
             contactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID));
         }
 

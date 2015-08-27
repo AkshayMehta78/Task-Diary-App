@@ -25,6 +25,7 @@ import android.widget.TimePicker;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.splunk.mint.Mint;
 import com.taskdiary.adapter.ReminderAdapter;
 import com.taskdiary.database.DatabaseHelper;
 import com.taskdiary.model.Reminder;
@@ -71,6 +72,7 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_createtask);
+        Mint.initAndStartSession(CreateTaskActivity.this, "125ddbf4");
 
         getWidgetReferences();
         setWidgetEvents();
@@ -368,8 +370,9 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
     }
 
     private void addTaskToDatabase() {
+        String taskTitle = labelEditText.getText().toString().trim();
         Task item = new Task();
-        item.setTitle(labelEditText.getText().toString().trim().substring(0, 1).toUpperCase().toString() + labelEditText.getText().toString().trim().substring(1, labelEditText.getText().toString().length()));
+        item.setTitle(taskTitle.substring(0, 1).toUpperCase().toString() + taskTitle.substring(1, taskTitle.length()));
         item.setDesc(descriptionEditText.getText().toString().trim());
         item.setCategory(selectedCatgeoryTextView.getText().toString());
         item.setPriority(selectedPriorityTextView.getText().toString());
@@ -387,19 +390,23 @@ public class CreateTaskActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        try {
+            if (requestCode == REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK && data != null) {
+                Log.d("Response", "Response: " + data.toString());
+                uriContact = data.getData();
+                contactID = Utils.getContactID(uriContact, this);
+                String name = Utils.retrieveContactName(contactID, this);
+                Bitmap imageData = Utils.retrieveContactPhoto(contactID, this);
+                setContactDetails(name, imageData);
 
-        if (requestCode == REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
-            Log.d("Response", "Response: " + data.toString());
-            uriContact = data.getData();
-            contactID = Utils.getContactID(uriContact, this);
-            String name = Utils.retrieveContactName(contactID, this);
-            Bitmap imageData = Utils.retrieveContactPhoto(contactID, this);
-            setContactDetails(name, imageData);
-
-            if(contactIDs.size()==id-1)
-                contactIDs.add(id - 1, contactID);
-            else
-                contactIDs.set(id - 1, contactID);
+                if (contactIDs.size() == id - 1)
+                    contactIDs.add(id - 1, contactID);
+                else
+                    contactIDs.set(id - 1, contactID);
+            }
+        }catch (Exception e)
+        {
+            Utils.showToast(getApplicationContext(),"Invalid Contact");
         }
     }
 

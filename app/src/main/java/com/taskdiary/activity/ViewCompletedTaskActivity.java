@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.splunk.mint.Mint;
 import com.taskdiary.adapter.TaskAdapter;
 import com.taskdiary.database.DatabaseHelper;
 import com.taskdiary.model.Reminder;
@@ -48,6 +49,7 @@ public class ViewCompletedTaskActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewall_task);
+        Mint.initAndStartSession(ViewCompletedTaskActivity.this, "125ddbf4");
 
         getWidgetReferences();
         setWidgetEvents();

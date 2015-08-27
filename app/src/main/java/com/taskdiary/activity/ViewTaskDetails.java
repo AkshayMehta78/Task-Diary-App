@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.splunk.mint.Mint;
 import com.taskdiary.adapter.ReminderAdapter;
 import com.taskdiary.database.DatabaseHelper;
 import com.taskdiary.model.Reminder;
@@ -71,6 +72,7 @@ public class ViewTaskDetails extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewtask);
+        Mint.initAndStartSession(ViewTaskDetails.this, "125ddbf4");
 
         getWidgetReferences();
         setWidgetEvents();

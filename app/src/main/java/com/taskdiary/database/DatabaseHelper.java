@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Logcat tag
     public static final String LOG = "DatabaseHelper";
     // Database Version
-    public static final int DATABASE_VERSION =1;
+    public static final int DATABASE_VERSION =3;
     // Database Name
     public static final String DATABASE_NAME = "TaskDiary";
 
@@ -79,14 +79,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // creating required tables
         db.execSQL(CREATE_TABLE_CATEGORY);
         db.execSQL(CREATE_TABLE_TASK);
-        Log.e(LOG, CREATE_TABLE_REMINDER);
         db.execSQL(CREATE_TABLE_REMINDER);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onCreate(db);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMINDER);
+        db.execSQL(CREATE_TABLE_REMINDER);
+
+        //  onCreate(db);
     }
 
     public void addDefaultCategories(Context context,ArrayList<String> category_list)
@@ -127,12 +129,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private void addReminderList(ArrayList<Reminder> list, long taskId) {
         for(int i = 0;i<list.size();i++)
         {
+            Reminder reminderObj = list.get(i);
+            if(!isExist(taskId,reminderObj)) {
                 ContentValues values = new ContentValues();
                 values.put(KEY_TASKID, taskId);
-                values.put(KEY_DATE, list.get(i).getDate());
-                values.put(KEY_TIME, list.get(i).getTime());
+                values.put(KEY_DATE, reminderObj.getDate());
+                values.put(KEY_TIME, reminderObj.getTime());
                 values.put(KEY_COMPLETED, 0);
                 db.insert(TABLE_REMINDER, null, values);
+            }
         }
     }
 
@@ -141,13 +146,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<Reminder> remindersList = getAllTaskReminders((int)taskId);
         for(int i = 0;i<remindersList.size();i++)
         {
-            if(remindersList.get(i).getDate().equalsIgnoreCase(reminder.getDate()) || remindersList.get(i).getCompleted().equalsIgnoreCase(Constant.COMPLETE))
-                {
+            if(remindersList.get(i).getDate().equalsIgnoreCase(reminder.getDate()))
                     flag= true;
-                }else
-                {
-                    deleteARemindersOfTask((int)taskId,remindersList.get(i).getDate());
-                }
         }
         return flag;
     }

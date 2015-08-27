@@ -21,6 +21,7 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.splunk.mint.Mint;
 import com.taskdiary.adapter.PagerAdapter;
 import com.taskdiary.database.DatabaseHelper;
 import com.taskdiary.fragment.CompletedTaskFragment;
@@ -48,6 +49,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Mint.initAndStartSession(HomeActivity.this, "125ddbf4");
 
         getWidgetReferences();
         setWidgetEvents();
